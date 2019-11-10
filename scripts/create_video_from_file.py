@@ -38,6 +38,9 @@ from utils.git_utils import get_file_history
 )
 @click.command()
 def create_video_from_file(repository_path, file_path, branch, output, tmp_dir):
+    """
+    Generate a video from a file git history on a given branch of a given local repository.
+    """
     file_name_without_ext, ext = splitext(os.path.basename(file_path))
     os.makedirs(tmp_dir, exist_ok=True)
 
