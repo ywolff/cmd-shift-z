@@ -1,2 +1,5 @@
-Pygments==2.4.2
+gitdb2==2.0.6
+GitPython==3.0.4
 imgkit==1.0.2
+Pygments==2.4.2
+smmap2==2.0.5
