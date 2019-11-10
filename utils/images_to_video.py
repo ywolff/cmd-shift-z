@@ -1,7 +1,16 @@
 import cv2
 
 
-def images_to_video(images_paths, output_path, images_per_seconds=10, codec='MJPG'):
+def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG'):
+    """
+    Combine images in a video
+
+    Args:
+        images_paths (List[str]): list of images paths to combine
+        output_path (str): path to output the video
+        images_per_second (int): number of frames per second
+        codec (str): codec in which to output the video
+    """
     images = []
     max_height = 0
     max_width = 0
@@ -18,7 +27,7 @@ def images_to_video(images_paths, output_path, images_per_seconds=10, codec='MJP
     video_writer = cv2.VideoWriter(
         output_path,
         cv2.VideoWriter_fourcc(*codec),
-        images_per_seconds,
+        images_per_second,
         (max_width, max_height)
     )
 
