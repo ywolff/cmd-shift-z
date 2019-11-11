@@ -1,6 +1,6 @@
 Click==7.0
 GitPython==3.0.4
 imgkit==1.0.2
-opencv-python
+opencv-python==4.1.1.26
 Pygments==2.4.2
 tqdm==4.38.0
