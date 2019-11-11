@@ -49,7 +49,11 @@ def create_video_from_file(repository_path, file_path, branch, output, tmp_dir):
 
     images_paths = []
 
-    for index, file_content in enumerate(tqdm(file_generated_history, desc='Generating images')):
+    for index, file_content in enumerate(tqdm(
+                                            reversed(file_generated_history),
+                                            total=len(file_generated_history),
+                                            desc='Generating images...',
+                                        )):
         html_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.html')
         css_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.css')
         image_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.png')
