@@ -1,10 +1,13 @@
+# =================== Standard libs ===================
 import os
 from os.path import splitext
 
+# =================== 3rd-party libs ===================
 import click
 import imgkit
 from tqdm import tqdm
 
+# =================== Project imports ===================
 from utils.code_to_html import code_to_html
 from utils.generate_sub_versions import generate_all_sub_versions_from_list
 from utils.images_to_video import images_to_video
@@ -12,9 +15,15 @@ from utils.git_utils import get_file_history
 
 
 @click.option(
-    '--repository_path', '-r',
-    help='Path to a git local repository.',
+    '--repository', '-r',
+    help='Path to a git local repository, or link to a remote repository.',
     required=True,
+)
+@click.option(
+    '--url',
+    '-u',
+    is_flag=True,
+    help='Set this flag up if you provide a Git repo URL.',
 )
 @click.option(
     '--file_path', '-f',
@@ -37,14 +46,14 @@ from utils.git_utils import get_file_history
     default='tmp',
 )
 @click.command()
-def create_video_from_file(repository_path, file_path, branch, output, tmp_dir):
+def create_video_from_file(repository, file_path, url, branch, output, tmp_dir):
     """
     Generate a video from a file git history on a given branch of a given local repository.
     """
     file_name_without_ext, ext = splitext(os.path.basename(file_path))
     os.makedirs(tmp_dir, exist_ok=True)
-
-    file_history = get_file_history(repository_path, file_path, branch)
+    print(url)
+    file_history = get_file_history(repository, file_path, url, branch, tmp_dir)
     file_generated_history = generate_all_sub_versions_from_list(file_history)
 
     images_paths = []
