@@ -60,7 +60,7 @@ def generate_all_sub_versions_from_list(versions, frequency=DEFAULT_FREQUENCY):
     """
     sub_versions = [
         sub_version
-        for version, next_version in zip(versions[:-1], versions[1:])
+        for version, next_version in zip(versions, versions[1:])
         for sub_version in generate_sub_versions(version, next_version, frequency)
     ]
     sub_versions.append(versions[-1])
