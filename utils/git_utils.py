@@ -19,7 +19,7 @@ def get_file_history(repository_path, file_path, branch_name="master"):
     repository_path = Path(repository_path)
 
     repo = Repo(repository_path)
-    commits = list(repo.iter_commits(branch_name, paths=file_path))
+    commits = reversed(list(repo.iter_commits(branch_name, paths=file_path)))
     return [
         repo.git.show(f'{commit.hexsha}:{file_path}')
         for commit in commits
