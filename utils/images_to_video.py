@@ -1,7 +1,9 @@
+import numpy as np
+
 import cv2
 
 
-def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG'):
+def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG', zoom_out_smoothing=5):
     """
     Combine images in a video
 
@@ -20,14 +22,19 @@ def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG
             max_width = width
         images.append(image)
 
-    resized_images = []
+    resize_ratios = []
     max_width_until_now = 0
-    resized_max_height = 0
     for image in images:
         _, width, _ = image.shape
         if width > max_width_until_now:
             max_width_until_now = width
-        resize_ratio = max_width / max_width_until_now
+        resize_ratios.append(max_width / max_width_until_now)
+
+    smooth_resize_ratios = np.convolve(resize_ratios, np.ones((zoom_out_smoothing,)) / zoom_out_smoothing, mode='valid')
+
+    resized_images = []
+    resized_max_height = 0
+    for image, resize_ratio in zip(images, smooth_resize_ratios):
         resized_image = cv2.resize(image, (0, 0), fx=resize_ratio, fy=resize_ratio)
         height, _, _ = resized_image.shape
         if height > resized_max_height:
@@ -51,6 +58,5 @@ def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG
             right=max(0, max_width - width),
             borderType=cv2.BORDER_REPLICATE,
         )
-        print('padded:', padded_image.shape)
         video_writer.write(padded_image)
     video_writer.release()
