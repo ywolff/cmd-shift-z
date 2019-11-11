@@ -1,12 +1,12 @@
 import os
 from os.path import splitext
-from pathlib import Path
 
 import click
 import imgkit
 from tqdm import tqdm
 
 from utils.code_to_html import code_to_html
+from utils.generate_sub_versions import generate_all_sub_versions_from_list
 from utils.images_to_video import images_to_video
 from utils.git_utils import get_file_history
 
@@ -45,12 +45,13 @@ def create_video_from_file(repository_path, file_path, branch, output, tmp_dir):
     os.makedirs(tmp_dir, exist_ok=True)
 
     file_history = get_file_history(repository_path, file_path, branch)
+    file_generated_history = generate_all_sub_versions_from_list(file_history)
 
     images_paths = []
 
     for index, file_content in enumerate(tqdm(
-                                            reversed(file_history),
-                                            total=len(file_history),
+                                            reversed(file_generated_history),
+                                            total=len(file_generated_history),
                                             desc='Generating images...',
                                         )):
         html_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.html')
