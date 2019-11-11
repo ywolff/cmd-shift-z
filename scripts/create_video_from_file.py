@@ -52,7 +52,6 @@ def create_video_from_file(repository, file_path, url, branch, output, tmp_dir):
     """
     file_name_without_ext, ext = splitext(os.path.basename(file_path))
     os.makedirs(tmp_dir, exist_ok=True)
-    print(url)
     file_history = get_file_history(repository, file_path, url, branch, tmp_dir)
     file_generated_history = generate_all_sub_versions_from_list(file_history)
 

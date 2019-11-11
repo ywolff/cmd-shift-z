@@ -22,7 +22,6 @@ def get_file_history(repository_path, file_path, is_url=False, branch_name="mast
         List[str]: The list containing the iterations of your file.
 
     """
-    print(is_url)
     if is_url:
         # Remote git repository case
         # This regex checks for most of GitHub and GitLab URL viability.
