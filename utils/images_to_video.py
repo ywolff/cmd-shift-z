@@ -1,9 +1,11 @@
+import math
+
 import numpy as np
 
 import cv2
 
 
-def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG', zoom_out_smoothing=5):
+def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG', zoom_out_smoothing_window=5):
     """
     Combine images in a video
 
@@ -30,7 +32,15 @@ def images_to_video(images_paths, output_path, images_per_second=10, codec='MJPG
             max_width_until_now = width
         resize_ratios.append(max_width / max_width_until_now)
 
-    smooth_resize_ratios = np.convolve(resize_ratios, np.ones((zoom_out_smoothing,)) / zoom_out_smoothing, mode='valid')
+    smooth_resize_ratios = np.convolve(
+        np.pad(
+            resize_ratios,
+            (math.ceil((zoom_out_smoothing_window - 1) / 2), math.floor((zoom_out_smoothing_window - 1) / 2)),
+            'edge'
+        ),
+        np.ones((zoom_out_smoothing_window,)) / zoom_out_smoothing_window,
+        mode='valid'
+    )
 
     resized_images = []
     resized_max_height = 0
