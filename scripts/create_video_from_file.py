@@ -49,13 +49,22 @@ def create_video_from_file(repository_path, file_path, branch, output, tmp_dir):
 
     images_paths = []
 
-    for index, file_content in enumerate(tqdm(file_generated_history, desc='Generating images...')):
+    for index, file_content in enumerate(tqdm(file_generated_history, desc='Generating images')):
         html_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.html')
         css_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.css')
         image_file_path = os.path.join(tmp_dir, f'{file_name_without_ext}_{index}.png')
 
         code_to_html(file_content, file_path, html_file_path, css_file_path)
-        imgkit.from_file(str(html_file_path), str(image_file_path), options={'quiet': 1})
+        imgkit.from_file(
+            str(html_file_path),
+            str(image_file_path),
+            options={
+                'quiet': 1,
+                'width': 1,
+                # `width` option is handled as a min_width. Setting a value of 1 instead of 1024 default value allows to
+                # output an image with the smallest width still containing all html content.
+            }
+        )
         images_paths.append(str(image_file_path))
 
     images_to_video(images_paths, output)
