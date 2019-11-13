@@ -61,6 +61,8 @@ def create_video_from_file(repository_path, file_path, branch, output, tmp_dir):
             options={
                 'quiet': 1,
                 'width': 1,
+                # `width` option is handled as a min_width. Setting a value of 1 instead of 1024 default value allows to
+                # output an image with the smallest width still containing all html content.
             }
         )
         images_paths.append(str(image_file_path))
