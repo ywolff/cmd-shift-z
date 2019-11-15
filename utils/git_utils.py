@@ -61,7 +61,7 @@ def get_git_repository_and_name(repository_source, tmp_dir):
     if url_match:
         # Remote git repository case
         repository_name = url_match[0][7]
-        print("Cloning repository")
+        # print("Cloning repository")
         return repository_name, Repo.clone_from(repository_source, f"{tmp_dir}/{repository_name}", progress=Progress())
     else:
         # Local git repository case
