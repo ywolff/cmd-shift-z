@@ -1,8 +1,13 @@
 import shutil
+import sys
 from pathlib import Path
 import re
 
-from git import Repo
+from git import Repo, remote
+from tqdm import tqdm, trange
+
+
+# pbar = tqdm(total=100)
 
 
 def get_file_history(repository, file_path, branch_name="master", tmp_dir="tmp", clean=True):
@@ -56,7 +61,31 @@ def get_git_repository_and_name(repository_source, tmp_dir):
     if url_match:
         # Remote git repository case
         repository_name = url_match[0][7]
-        return repository_name, Repo.clone_from(repository_source, f"{tmp_dir}/{repository_name}")
+        print("Cloning repository")
+        return repository_name, Repo.clone_from(repository_source, f"{tmp_dir}/{repository_name}", progress=Progress())
     else:
         # Local git repository case
         return repository_source.split("/")[-1], Repo(Path(repository_source))
+
+
+class Progress(remote.RemoteProgress):
+    global receiving_progress_bar
+    global resolving_progress_bar
+    receiving_progress_bar = tqdm(total=100, desc=f"Receiving data...", file=sys.stdout)
+    resolving_progress_bar = tqdm(total=100, desc=f"Resolving data...", file=sys.stdout)
+
+    def update(self, op_code, cur_count, max_count=None, message=''):
+        global receiving_progress_bar
+        global resolving_progress_bar
+        if op_code == self.RECEIVING:
+            receiving_progress_bar.update(int(100*cur_count/max_count) - receiving_progress_bar.n)
+            receiving_progress_bar.refresh(nolock=True)
+            if cur_count == max_count:
+                del receiving_progress_bar
+
+        if op_code == self.RESOLVING:
+            resolving_progress_bar.update(int(100*cur_count/max_count) - resolving_progress_bar.n)
+            resolving_progress_bar.refresh(nolock=True)
+            if cur_count == max_count:
+                del resolving_progress_bar
+
