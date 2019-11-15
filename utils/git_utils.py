@@ -4,10 +4,7 @@ from pathlib import Path
 import re
 
 from git import Repo, remote
-from tqdm import tqdm, trange
-
-
-# pbar = tqdm(total=100)
+from tqdm import tqdm
 
 
 def get_file_history(repository, file_path, branch_name="master", tmp_dir="tmp", clean=True):
@@ -61,7 +58,6 @@ def get_git_repository_and_name(repository_source, tmp_dir):
     if url_match:
         # Remote git repository case
         repository_name = url_match[0][7]
-        # print("Cloning repository")
         return repository_name, Repo.clone_from(repository_source, f"{tmp_dir}/{repository_name}", progress=Progress())
     else:
         # Local git repository case
@@ -69,6 +65,9 @@ def get_git_repository_and_name(repository_source, tmp_dir):
 
 
 class Progress(remote.RemoteProgress):
+    """
+    This class provides two tqdm progress bar and a callback to updated them when cloning a remote repository.
+    """
     global receiving_progress_bar
     global resolving_progress_bar
     receiving_progress_bar = tqdm(total=100, desc=f"Receiving data...", file=sys.stdout)
@@ -77,6 +76,7 @@ class Progress(remote.RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
         global receiving_progress_bar
         global resolving_progress_bar
+
         if op_code == self.RECEIVING:
             receiving_progress_bar.update(int(100*cur_count/max_count) - receiving_progress_bar.n)
             receiving_progress_bar.refresh(nolock=True)
