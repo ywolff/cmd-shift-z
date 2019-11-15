@@ -1,13 +1,10 @@
-# =================== Standard libs ===================
 import os
 from os.path import splitext
 
-# =================== 3rd-party libs ===================
 import click
 import imgkit
 from tqdm import tqdm
 
-# =================== Project imports ===================
 from utils.code_to_html import code_to_html
 from utils.generate_sub_versions import generate_all_sub_versions_from_list
 from utils.images_to_video import images_to_video
