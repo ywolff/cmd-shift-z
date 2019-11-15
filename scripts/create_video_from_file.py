@@ -20,12 +20,6 @@ from utils.git_utils import get_file_history
     required=True,
 )
 @click.option(
-    '--url',
-    '-u',
-    is_flag=True,
-    help='Set this flag up if you provide a Git repo URL.',
-)
-@click.option(
     '--file_path', '-f',
     help='Path to the file from which you want to create a video.',
     required=True,
@@ -46,13 +40,13 @@ from utils.git_utils import get_file_history
     default='tmp',
 )
 @click.command()
-def create_video_from_file(repository, file_path, url, branch, output, tmp_dir):
+def create_video_from_file(repository, file_path, branch, output, tmp_dir):
     """
-    Generate a video from a file git history on a given branch of a given local repository.
+    Generate a video from a file git history on a given branch of a given repository (url or local path).
     """
     file_name_without_ext, ext = splitext(os.path.basename(file_path))
     os.makedirs(tmp_dir, exist_ok=True)
-    file_history = get_file_history(repository, file_path, url, branch, tmp_dir)
+    file_history = get_file_history(repository, file_path, branch, tmp_dir)
     file_generated_history = generate_all_sub_versions_from_list(file_history)
 
     images_paths = []
