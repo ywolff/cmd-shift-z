@@ -49,7 +49,7 @@ def get_git_repository_and_name(repository_source, tmp_dir):
         tmp_dir (str): The path of the folder in which to clone the remote repository.
 
     Returns:
-        Tuple[str,git.Repo]: The name of the repository and the repository object itself.
+        Tuple[str, git.Repo]: The name of the repository and the repository object itself.
 
     """
     online_git_repo_regex = r"((git|ssh|http(s)?)|(git@[\w\.]+))(:(\/\/)?)" \
@@ -61,31 +61,29 @@ def get_git_repository_and_name(repository_source, tmp_dir):
         return repository_name, Repo.clone_from(repository_source, f"{tmp_dir}/{repository_name}", progress=Progress())
     else:
         # Local git repository case
-        return repository_source.split("/")[-1], Repo(Path(repository_source))
+        return Path(repository_source).name, Repo(Path(repository_source))
 
 
 class Progress(remote.RemoteProgress):
     """
     This class provides two tqdm progress bar and a callback to updated them when cloning a remote repository.
     """
-    global receiving_progress_bar
-    global resolving_progress_bar
-    receiving_progress_bar = tqdm(total=100, desc=f"Receiving data...", file=sys.stdout)
-    resolving_progress_bar = tqdm(total=100, desc=f"Resolving data...", file=sys.stdout)
+    def __init__(self):
+        self.receiving_progress_bar = tqdm(total=100, desc=f"Receiving data...", file=sys.stdout)
+        self.resolving_progress_bar = tqdm(total=100, desc=f"Resolving data...", file=sys.stdout)
 
-    def update(self, op_code, cur_count, max_count=None, message=''):
-        global receiving_progress_bar
-        global resolving_progress_bar
+        super().__init__()
 
+    def update(self, op_code, cur_count, max_count=None, message=""):
         if op_code == self.RECEIVING:
-            receiving_progress_bar.update(int(100*cur_count/max_count) - receiving_progress_bar.n)
-            receiving_progress_bar.refresh(nolock=True)
+            self.receiving_progress_bar.update(int(100*cur_count/max_count) - self.receiving_progress_bar.n)
+            self.receiving_progress_bar.refresh()
             if cur_count == max_count:
-                del receiving_progress_bar
+                self.receiving_progress_bar.close()
 
         if op_code == self.RESOLVING:
-            resolving_progress_bar.update(int(100*cur_count/max_count) - resolving_progress_bar.n)
-            resolving_progress_bar.refresh(nolock=True)
+            self.resolving_progress_bar.update(int(100*cur_count/max_count) - self.resolving_progress_bar.n)
+            self.resolving_progress_bar.refresh()
             if cur_count == max_count:
-                del resolving_progress_bar
+                self.resolving_progress_bar.close()
 
