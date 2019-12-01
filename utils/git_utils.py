@@ -66,7 +66,7 @@ def get_git_repository_and_name(repository_source, tmp_dir):
 
 class Progress(remote.RemoteProgress):
     """
-    This class provides two tqdm progress bar and a callback to updated them when cloning a remote repository.
+    This class provides two tqdm progress bar and a callback to update them when cloning a remote repository.
     """
     def __init__(self):
         self.receiving_progress_bar = tqdm(total=100, desc=f"Receiving data...", file=sys.stdout)
